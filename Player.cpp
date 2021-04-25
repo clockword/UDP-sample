@@ -9,22 +9,22 @@ void Player::MoveInput(DWORD tick)
 	if (key[VK_LEFT] & 0x80)
 	{
 		SetAniKind(ANIKIND::LEFT);
-		Translate(-speed * (int)(tick * 0.1), 0);
+		MoveBy(-speed * (int)(tick * 0.1), 0);
 	}
 	else if (key[VK_RIGHT] & 0x80)
 	{
 		SetAniKind(ANIKIND::RIGHT);
-		Translate(speed * (int)(tick * 0.1), 0);
+		MoveBy(speed * (int)(tick * 0.1), 0);
 	}
 	else if (key[VK_UP] & 0x80)
 	{
 		SetAniKind(ANIKIND::UP);
-		Translate(0, -speed * (int)(tick * 0.1));
+		MoveBy(0, -speed * (int)(tick * 0.1));
 	}
 	else if (key[VK_DOWN] & 0x80)
 	{
 		SetAniKind(ANIKIND::DOWN);
-		Translate(0, speed * (int)(tick * 0.1));
+		MoveBy(0, speed * (int)(tick * 0.1));
 	}
 }
 

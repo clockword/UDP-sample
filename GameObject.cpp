@@ -16,6 +16,14 @@ GameObject::GameObject()
 	m_y = 0;
 	m_xCenter = 0;
 	m_yCenter = 0;
+	m_sizeX = 1.0f;
+	m_sizeY = 1.0f;
+	m_active = true;
+	m_imageColor = { 1.0f, 0.0f, 0.0f, 0.0f, 0.0f,
+					 0.0f, 1.0f, 0.0f, 0.0f, 0.0f,
+			  	     0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
+				     0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
+				     0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 }
 
 GameObject::~GameObject()
@@ -85,8 +93,39 @@ void GameObject::SetLocation(int x, int y)
 
 void GameObject::Update(Graphics* g, DWORD tick)
 {
+	if (!m_active)
+		return;
+
 	UpdateAnim(tick);
 	Draw(g);
+}
+
+Rect GameObject::GetOriginalImageRect()
+{
+	int x = m_x - m_xCenter;
+	int y = m_y - m_yCenter;
+	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
+	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
+	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
+	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
+
+	Rect viewRect(x, y, sourceWidth, sourceHeight);
+
+	return viewRect;
+}
+
+Rect GameObject::GetImageRect()
+{
+	int x = m_x - m_xCenter * m_sizeX;
+	int y = m_y - m_yCenter * m_sizeY;
+	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
+	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
+	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
+	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
+
+	Rect viewRect(x, y, sourceWidth * m_sizeX, sourceHeight * m_sizeY);
+
+	return viewRect;
 }
 
 void GameObject::UpdateAnim(DWORD tick)
@@ -106,15 +145,25 @@ void GameObject::UpdateAnim(DWORD tick)
 
 void GameObject::Draw(Graphics * g)
 {
-	int x = m_x - m_xCenter;
-	int y = m_y - m_yCenter;
+	int x = m_x - m_xCenter * m_sizeX;
+	int y = m_y - m_yCenter * m_sizeY;
+	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
+	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
+	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
+	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
+	
+	Rect viewRect(x, y, sourceWidth * m_sizeX, sourceHeight * m_sizeY);
 
-	g->DrawImage(m_image, x, y,
-		m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X,
-		m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y,
-		m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width,
-		m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height,
-		Gdiplus::UnitPixel);
+	ImageAttributes attributes;
+	attributes.SetColorMatrix(&m_imageColor);
+
+	g->DrawImage(m_image, viewRect,
+		sourceX,
+		sourceY,
+		sourceWidth,
+		sourceHeight,
+		Gdiplus::UnitPixel,
+		&attributes);
 }
 
 void GameObject::SetCenter(int x, int y)
@@ -129,8 +178,14 @@ void GameObject::MoveTo(int x, int y)
 	m_y = y;
 }
 
-void GameObject::Translate(int x, int y)
+void GameObject::MoveBy(int x, int y)
 {
 	m_x += x;
 	m_y += y;
+}
+
+void GameObject::SetSize(float x, float y)
+{
+	m_sizeX = x;
+	m_sizeY = y;
 }

@@ -1,6 +1,11 @@
 #include "ResourceManager.h"
 
-std::map<std::string, Image*> ResourceManager::m_img;
+ResourceManager* ResourceManager::GetInstance()
+{
+	static ResourceManager instance;
+
+	return &instance;
+}
 
 Image *ResourceManager::LoadImage_(std::string name)
 {

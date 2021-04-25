@@ -1,82 +1,76 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include "Game.h"
+#include <iostream>
 
-void Game::Load(std::string name)
+#include "ResourceManager.h"
+
+void Game::AddLevel(std::string name)
 {
-	if (m_obj != nullptr)
+	if (m_levels.find(name) == m_levels.end())
 	{
-		delete[] m_obj;
-		m_obj = nullptr;
+		m_levels[name] = new Level(name);
+		m_levels[name]->SetThisGame(this);
 	}
-
-	FILE* fp = nullptr;
-
-	std::string path = "./Resource/Level/" + name + ".txt";
-	fopen_s(&fp, path.c_str(), "rt");
-
-	int count;
-	std::string* key;
-	char ch[256];
-
-	fscanf_s(fp, "%d", &count);
-	key = new std::string[count];
-	for (int i = 0; i < count; ++i)
-	{
-		fscanf(fp, "%s", ch);
-		key[i] = ch;
-	}
-
-	fscanf_s(fp, "%d", &count);
-	m_count = count;
-	m_obj = new GameObject[count];
-	int key_index, x, y;
-	for (int i = 0; i < count; ++i)
-	{
-		fscanf_s(fp, "%d %d %d", &key_index, &x, &y);
-		m_obj[i].SetFile(key[key_index]);
-		m_obj[i].SetImage(ResourceManager::LoadImage_(key[key_index]));
-		m_obj[i].SetLocation(x, y);
-	}
-
-	fscanf_s(fp, "%d %d %d", &key_index, &x, &y);
-	m_player.SetFile(key[key_index]);
-	m_player.SetImage(ResourceManager::LoadImage_(key[key_index]));
-	m_player.SetLocation(x, y);
-
-	delete[] key;
-
-	fclose(fp);
 }
 
 Game::Game()
 {
-	m_obj = nullptr;
-	m_count = 0;
+	m_currentLevel = nullptr;
+
+	m_targetFrame = 0;
+	m_fixedFrame = 0;
+	m_frameCount = 0;
+	m_fixedCount = 0;
 }
 
 Game::~Game()
 {
-	if (m_obj != nullptr)
-		delete[] m_obj;
+	Levels::iterator it = m_levels.begin();
+	for (; it != m_levels.end(); it++)
+	{
+		delete it->second;
+	}
+	m_levels.clear();
+	m_currentLevel = nullptr;
 }
 
+void Game::ChangeLevel(std::string name)
+{
+	if (m_currentLevel != nullptr)
+	{
+		m_currentLevel->UnLoad();
+	}
+	m_currentLevel = m_levels[name];
+	m_currentLevel->Load();
+	m_currentLevel->Init();
+}
 void Game::Init()
 {
-	Load("lvl_test");
+	m_targetFrame = 15;
+	m_fixedFrame = 50;
 
-	m_player.SetSpeed(5);
+	AddLevel("lvl_title");
+
+	ChangeLevel("lvl_title");
 }
 
 void Game::Update(Graphics* g, DWORD tick)
 {
-	for (int i = 0; i < m_count; ++i)
+	m_frameCount += tick;
+	m_fixedCount += tick;
+	if (m_frameCount >= m_targetFrame)
 	{
-		m_obj[i].Update(g, tick);
+		m_currentLevel->Update(g, m_frameCount);
+		m_frameCount = 0;
 	}
-	m_player.Update(g, tick);
+	if (m_fixedCount >= m_fixedFrame)
+	{
+		World::GetInstance()->FixedUpdate(m_fixedCount);
+		m_fixedCount = 0;
+	}
 }
 
 void Game::Delete()
 {
-	ResourceManager::DeleteImages();
+	ResourceManager::GetInstance()->DeleteImages();
 }

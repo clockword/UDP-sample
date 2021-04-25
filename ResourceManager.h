@@ -9,13 +9,24 @@
 #pragma comment(lib, "gdiplus")
 using namespace Gdiplus;
 
-class ResourceManager
+static class ResourceManager sealed
 {
 private:
-	static std::map<std::string, Image*> m_img;
+	typedef std::map<std::string, Image*> ImageMap;
+	ImageMap m_img;
+
 public:
-	static Image* LoadImage_(std::string name);
-	static Image* GetImage(std::string key);
-	static void DeleteImages();
+	static ResourceManager* GetInstance();
+
+private:
+	ResourceManager() {}
+
+	ResourceManager(ResourceManager&);
+	ResourceManager& operator=(ResourceManager&);
+
+public:
+	Image* LoadImage_(std::string name);
+	Image* GetImage(std::string key);
+	void DeleteImages();
 };
 

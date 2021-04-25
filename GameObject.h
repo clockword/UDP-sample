@@ -32,22 +32,44 @@ private:
 	int m_y;
 	int m_xCenter;
 	int m_yCenter;
+	float m_sizeX;
+	float m_sizeY;
+	bool m_active;
+
+	ColorMatrix m_imageColor;
+
+	std::string m_tag;
+
 protected:
 	void SetAniKind(ANIKIND kind) { m_aniKind = (DWORD)kind; }
 	void SetAniKind(DWORD kind) { m_aniKind = kind; }
 	ANIKIND GetAniKind() { return (ANIKIND)m_aniKind; }
 	void SetCenter(int x, int y);
 	void MoveTo(int x, int y);
-	void Translate(int x, int y);
+	void MoveBy(int x, int y);
+	void SetSize(float x, float y);
+	void SetActive(bool active) { m_active = active; }
+	bool GetActive() { return m_active; }
+	Point GetPosition() { return Point(m_x, m_y); }
+	Rect GetOriginalImageRect();
+	Rect GetImageRect();
+	void SetImageColor(ColorMatrix color) { m_imageColor = color; }
+	ColorMatrix GetImageColor() { return m_imageColor; }
 
 	void UpdateAnim(DWORD tick);
-	void Draw(Graphics* g);
+	virtual void Draw(Graphics* g);
 public:
 	GameObject();
 	virtual ~GameObject();
 
+	virtual void Init() {}
+
+	void SetTag(std::string tag) { m_tag = tag; }
+	std::string GetTag() { return m_tag; }
+
 	void SetFile(std::string filename);
 	void SetImage(Image* image);
+	virtual void SetCollider(std::string filename) {}
 	void SetLocation(int x, int y);
 
 	virtual void Update(Graphics* g, DWORD tick);

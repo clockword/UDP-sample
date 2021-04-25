@@ -1,4 +1,5 @@
 #include "Game.h"
+#include "InputManager.h"
 
 Graphics *g_BackBuffer;
 Graphics *g_MainBuffer;
@@ -96,8 +97,31 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 {
 	switch(msg)
 	{
+	case WM_MOUSEMOVE:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		InputManager::GetInstance()->SetMouseMovePos(x, y);
+	}break;
+	case WM_LBUTTONDOWN:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		InputManager::GetInstance()->SetMouseDownPos(x, y);
+		InputManager::GetInstance()->SetMouseClick(true);
+	}break;
+	case WM_LBUTTONUP:
+	{
+		int x = LOWORD(lParam);
+		int y = HIWORD(lParam);
+		InputManager::GetInstance()->SetMouseUpPos(x, y);
+		InputManager::GetInstance()->SetMouseClick(false);
+	}break;
+	case WM_CHAR:
+	{
+		InputManager::GetInstance()->KeyBoardInput(wParam);
+	}break;
 	case WM_KEYDOWN:
-
 		break;
 	case WM_CREATE:
 		break;

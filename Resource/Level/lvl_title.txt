@@ -1,0 +1,6 @@
+0 default bg_space 512 384
+1 default bt_button 512 307
+2 default bt_button 512 614
+3 default tb_textbox 512 460
+4 default tx_text 512 154
+0 0 End 0 0
