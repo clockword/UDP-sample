@@ -43,5 +43,9 @@ public:
 	static float Distance(Vector2 vec1, Vector2 vec2);
 	static Vector2 Normalize(Vector2 begin, Vector2 end);
 	static Vector2 Zero();
+	static Vector2 Left();
+	static Vector2 Right();
+	static Vector2 Up();
+	static Vector2 Down();
 };
 

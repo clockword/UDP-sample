@@ -16,12 +16,18 @@ private:
 	typedef std::vector<CollObject*> CollObjectArr;
 	typedef std::map<std::string, CollObjectArr> CollObjectMap;
 	CollObjectMap m_collObjects;
+	CollObjectMap m_colCheckMap;
 
 private:
 	World() {}
 
 	World(World&);
 	World& operator=(World&);
+
+private:
+	void PushCheckMap(std::string tag, CollObjectArr push);
+	void CollisionProcess(CollObject* object, CollObject* check, Point& movePos, DWORD tick);
+
 public:
 	static World* GetInstance();
 

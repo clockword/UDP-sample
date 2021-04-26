@@ -3,14 +3,9 @@
 void CollObject::PhysicsProcess(DWORD tick)
 {
 	float deltatime = tick * 0.001f;
-	Vector2 friction = m_velocity.GetReverse().GetNormalized() * m_friction * deltatime;
+
 	m_velocity += m_acceleration * deltatime;
-	if (m_velocity.GetMagnitude() > friction.GetMagnitude())
-		m_velocity += friction;
-	else
-		m_velocity = Vector2::Zero();
-	if (m_velocity.GetMagnitude() > m_maxSpeed)
-		m_velocity = m_velocity.GetNormalized() * m_maxSpeed;}
+}
 
 void CollObject::Draw(Graphics* g)
 {
@@ -61,9 +56,22 @@ void CollObject::SetCollider(std::string filename)
 	fclose(file);
 }
 
+void CollObject::SetMovedPosition(Point position)
+{
+	m_collider->SetPosition(position);
+	SetPosition(position + m_collider->GetLocalPosition());
+}
+
+void CollObject::Init()
+{
+	SetMovedPosition(GetPosition());
+	//SetMaxSpeed(10.0f);
+	//SetFriction(1.0f);
+}
+
 void CollObject::FixedUpdate(DWORD tick)
 {
-	PhysicsProcess(tick);
+	//PhysicsProcess(tick);
 }
 
 void CollObject::OnCollisionEnter(CollObject* other)

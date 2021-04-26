@@ -8,39 +8,37 @@ void Player::MoveInput(DWORD tick)
 
 	if (key[VK_LEFT] & 0x80)
 	{
-		SetAniKind(ANIKIND::LEFT);
-		MoveBy(-speed * (int)(tick * 0.1), 0);
+		SetAniKind(static_cast<DWORD>(ANIKIND::LEFT));
+		SetVelocity(Vector2::Left() * 100.0f);
 	}
 	else if (key[VK_RIGHT] & 0x80)
 	{
-		SetAniKind(ANIKIND::RIGHT);
-		MoveBy(speed * (int)(tick * 0.1), 0);
+		SetAniKind(static_cast<DWORD>(ANIKIND::RIGHT));
+		SetVelocity(Vector2::Right() * 100.0f);
 	}
 	else if (key[VK_UP] & 0x80)
 	{
-		SetAniKind(ANIKIND::UP);
-		MoveBy(0, -speed * (int)(tick * 0.1));
+		SetAniKind(static_cast<DWORD>(ANIKIND::UP));
+		SetVelocity(Vector2::Up() * 100.0f);
 	}
 	else if (key[VK_DOWN] & 0x80)
 	{
-		SetAniKind(ANIKIND::DOWN);
-		MoveBy(0, speed * (int)(tick * 0.1));
+		SetAniKind(static_cast<DWORD>(ANIKIND::DOWN));
+		SetVelocity(Vector2::Down() * 100.0f);
+	}
+	else
+	{
+		SetVelocity(Vector2::Zero());
 	}
 }
 
-Player::Player() : GameObject()
+void Player::Init()
 {
-	speed = 0;
-}
-
-Player::~Player()
-{
+	CollObject::Init();
 }
 
 void Player::Update(Graphics* g, DWORD tick)
 {
+	CollObject::Update(g, tick);
 	MoveInput(tick);
-
-	UpdateAnim(tick);
-	Draw(g);
 }

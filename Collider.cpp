@@ -1,5 +1,13 @@
 #include "Collider.h"
 
+Rect ColliderRect::GetRect()
+{
+	Rect rect(GetPosition(), m_size);
+	rect.X = rect.X + GetLocalPosition().X - m_size.Width * 0.5;
+	rect.Y = rect.Y + GetLocalPosition().Y - m_size.Height * 0.5;
+	return rect;
+}
+
 void ColliderRect::Draw(Graphics* g)
 {
 #ifdef _DEBUG

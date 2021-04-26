@@ -189,16 +189,31 @@ Vector2& Vector2::operator/=(const float scalar)
 
 float Vector2::GetMagnitude()
 {
+	if (x == 0.0f && y == 0.0f)
+		return 0.0f;
+	else if (x == 0.0f)
+		return y;
+	else if (y == 0.0f)
+		return x;
 	return sqrtf(x * x + y * y);
 }
 
 float Vector2::GetSqrMagnitude()
 {
+	if (x == 0.0f && y == 0.0f)
+		return 0.0f;
+	else if (x == 0.0f)
+		return y * y;
+	else if (y == 0.0f)
+		return x * x;
 	return x * x + y * y;
 }
 
 Vector2 Vector2::GetNormalized()
 {
+	if (*this == Vector2::Zero())
+		return Vector2::Zero();
+
 	Vector2 temp = *this;
 
 	temp.Normalize();
@@ -208,13 +223,17 @@ Vector2 Vector2::GetNormalized()
 
 void Vector2::Normalize()
 {
+	float magnitude = GetMagnitude();
+	if (magnitude == 0.0f)
+		return;
+
 	x /= GetMagnitude();
 	y /= GetMagnitude();
 }
 
 Vector2 Vector2::GetReverse()
 {
-	return -(*this);
+	return (Vector2::Zero() - (*this));
 }
 
 float Vector2::Dot(Vector2 lhs, Vector2 rhs)
@@ -247,4 +266,24 @@ Vector2 Vector2::Zero()
 	Vector2 temp(0.0f, 0.0f);
 
 	return temp;
+}
+
+Vector2 Vector2::Left()
+{
+	return Vector2(-1.0f, 0.0f);
+}
+
+Vector2 Vector2::Right()
+{
+	return Vector2(1.0f, 0.0f);
+}
+
+Vector2 Vector2::Up()
+{
+	return Vector2(0.0f, -1.0f);
+}
+
+Vector2 Vector2::Down()
+{
+	return Vector2(0.0f, 1.0f);
 }

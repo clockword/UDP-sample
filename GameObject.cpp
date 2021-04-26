@@ -24,6 +24,7 @@ GameObject::GameObject()
 			  	     0.0f, 0.0f, 1.0f, 0.0f, 0.0f,
 				     0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 				     0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
+	m_imgScale = SizeF(1.0f, 1.0f);
 }
 
 GameObject::~GameObject()
@@ -82,13 +83,18 @@ void GameObject::SetFile(std::string filename)
 void GameObject::SetImage(Image* image)
 {
 	m_image = image;
-	SetCenter((int)(image->GetWidth() * 0.5), (int)(image->GetHeight() * 0.5));
 }
 
-void GameObject::SetLocation(int x, int y)
+void GameObject::SetPosition(int x, int y)
 {
 	m_x = x;
 	m_y = y;
+}
+
+void GameObject::SetPosition(Point position)
+{
+	m_x = position.X;
+	m_y = position.Y;
 }
 
 void GameObject::Update(Graphics* g, DWORD tick)
@@ -102,20 +108,6 @@ void GameObject::Update(Graphics* g, DWORD tick)
 
 Rect GameObject::GetOriginalImageRect()
 {
-	int x = m_x - m_xCenter;
-	int y = m_y - m_yCenter;
-	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
-	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
-	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
-	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
-
-	Rect viewRect(x, y, sourceWidth, sourceHeight);
-
-	return viewRect;
-}
-
-Rect GameObject::GetImageRect()
-{
 	int x = m_x - m_xCenter * m_sizeX;
 	int y = m_y - m_yCenter * m_sizeY;
 	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
@@ -124,6 +116,20 @@ Rect GameObject::GetImageRect()
 	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
 
 	Rect viewRect(x, y, sourceWidth * m_sizeX, sourceHeight * m_sizeY);
+
+	return viewRect;
+}
+
+Rect GameObject::GetImageRect()
+{
+	int x = m_x - m_xCenter;
+	int y = m_y - m_yCenter;
+	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
+	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
+	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
+	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
+
+	Rect viewRect(x, y, sourceWidth, sourceHeight);
 
 	return viewRect;
 }
@@ -141,18 +147,20 @@ void GameObject::UpdateAnim(DWORD tick)
 			m_aniIndex[m_aniKind] = 0;
 		}
 	}
+
+	SetCenter(GetImageRect().Width * 0.5, GetImageRect().Height * 0.5);
 }
 
 void GameObject::Draw(Graphics * g)
 {
-	int x = m_x - m_xCenter * m_sizeX;
-	int y = m_y - m_yCenter * m_sizeY;
+	int x = m_x - m_xCenter * m_sizeX * m_imgScale.Width;
+	int y = m_y - m_yCenter * m_sizeY * m_imgScale.Height;
 	INT sourceX = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].X;
 	INT sourceY = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Y;
 	INT sourceWidth = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Width;
 	INT sourceHeight = m_aniRect[m_aniKind][m_aniIndex[m_aniKind]].Height;
 	
-	Rect viewRect(x, y, sourceWidth * m_sizeX, sourceHeight * m_sizeY);
+	Rect viewRect(x, y, sourceWidth * m_sizeX * m_imgScale.Width, sourceHeight * m_sizeY * m_imgScale.Height);
 
 	ImageAttributes attributes;
 	attributes.SetColorMatrix(&m_imageColor);

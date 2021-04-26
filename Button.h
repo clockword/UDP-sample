@@ -15,14 +15,15 @@ protected:
 	virtual void Draw(Graphics* g);
 
 	virtual void MouseWork();
-	void SetFontScale(float scale) { m_fontScale = scale; }
-	float GetFontScale() { return m_fontScale; }
 	void SetButtonClicked(bool clicked) { m_buttonClick = clicked; }
 	bool GetButtonClicked() { return m_buttonClick; }
 
 public:
 	Button() : Text(), m_fontScale(1.0f), m_buttonClick(false), OnButton(nullptr), m_ctx(nullptr), m_index(-1) {}
 	virtual ~Button() {}
+
+	void SetFontScale(float scale) { m_fontScale = scale; }
+	float GetFontScale() { return m_fontScale; }
 
 	virtual void OnMouseButtonDown(int x, int y);
 	virtual void OnMouseButtonUp(int x, int y);

@@ -1,17 +1,24 @@
 #pragma once
-#include "GameObject.h"
+#include "CollObject.h"
 
-class Player : public GameObject
+class Player : public CollObject
 {
 private:
-	int speed;
+	enum class ANIKIND
+	{
+		LEFT,
+		RIGHT,
+		UP,
+		DOWN
+	};
+
 protected:
 	void MoveInput(DWORD tick);
-public:
-	Player();
-	virtual ~Player();
 
-	void SetSpeed(int speed) { this->speed = speed; }
+public:
+	Player() : CollObject() {}
+	virtual ~Player() {}
+	virtual void Init();
 	virtual void Update(Graphics* g, DWORD tick);
 };
 

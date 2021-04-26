@@ -56,6 +56,7 @@ public:
 
 	void SetCollider(Size size = Size()) { m_size = size; }
 	Size GetSize() { return m_size; }
+	Rect GetRect();
 
 	void Draw(Graphics* g);
 };

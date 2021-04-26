@@ -27,20 +27,20 @@ void Button::MouseWork()
 	{
 		if (InputManager::GetInstance()->GetMouseClick())
 		{
-			SetSize(1.2f, 1.2f);
+			SetScale(SizeF(1.2f, 1.2f));
 			SetFontScale(1.2f);
 			SetButtonClicked(true);
 		}
 		else
 		{
-			SetSize(1.5f, 1.5f);
+			SetScale(SizeF(1.5f, 1.5f));
 			SetFontScale(1.5f);
 			SetButtonClicked(false);
 		}
 	}
 	else
 	{
-		SetSize(1.0f, 1.0f);
+		SetScale(SizeF(1.0f, 1.0f));
 		SetFontScale(1.0f);
 		SetButtonClicked(false);
 	}

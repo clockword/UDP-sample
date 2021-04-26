@@ -23,6 +23,9 @@ private:
 		LVL_HOST,
 		LVL_FIND,
 		LVL_INGAME,
+		GAME_OUT,
+		HOST_START,
+		FIND_START,
 	};
 
 public:

@@ -33,20 +33,88 @@ void Level::Init()
 
 	if (m_name == "lvl_title")
 	{
-		static_cast<Button*>(m_obj[1])->RegisterButtonFunc(
-			ButtonProcess, this, (int)ButtonWork::LVL_HOST);
-		static_cast<Button*>(m_obj[1])->RegisterButtonFunc(
-			ButtonProcess, this, (int)ButtonWork::LVL_FIND);
-	}
-	else if (m_name == "lvl_find")
-	{
+		auto title_text = static_cast<Text*>(m_obj[4]);
+		auto host_button = static_cast<Button*>(m_obj[1]);
+		auto find_button = static_cast<Button*>(m_obj[2]);
+		auto out_button = static_cast<Button*>(m_obj[3]);
 
+		std::string font = "Comic Sans MS";
+
+		host_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_HOST);
+		find_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_FIND);
+		out_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::GAME_OUT);
+
+		title_text->SetText("Test Multiplayer");
+		title_text->SetFont(font);
+
+		host_button->SetText("Host Game");
+		host_button->SetFont(font);
+		host_button->SetSize(2.0f, 1.0f);
+
+		find_button->SetText("Find Game");
+		find_button->SetFont(font);
+		find_button->SetSize(2.0f, 1.0f);
+
+		out_button->SetText("Quit Game");
+		out_button->SetFont(font);
+		out_button->SetSize(2.0f, 1.0f);
 	}
 	else if (m_name == "lvl_host")
 	{
+		auto title_text = static_cast<Text*>(m_obj[4]);
+		auto title_button = static_cast<Button*>(m_obj[1]);
+		auto port_textbox = static_cast<TextBox*>(m_obj[2]);
+		auto host_button = static_cast<Button*>(m_obj[3]);
 
+		std::string font = "Comic Sans MS";
+
+		title_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_TITLE);
+		host_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::HOST_START);
+
+		title_text->SetText("Host Game");
+		title_text->SetFont(font);
+
+		title_button->SetText("Back");
+		title_button->SetFont(font);
+
+		port_textbox->SetText("enter portnumber");
+		port_textbox->SetFont(font);
+		port_textbox->SetSize(3.0f, 1.0f);
+
+		host_button->SetText("Start");
+		host_button->SetFont(font);
 	}
-	else if (m_name == "lvl_inGame")
+	else if (m_name == "lvl_find")
+	{
+		auto title_text = static_cast<Text*>(m_obj[5]);
+		auto title_button = static_cast<Button*>(m_obj[1]);
+		auto ip_textbox = static_cast<TextBox*>(m_obj[2]);
+		auto port_textbox = static_cast<TextBox*>(m_obj[3]);
+		auto find_button = static_cast<Button*>(m_obj[4]);
+
+		std::string font = "Comic Sans MS";
+
+		title_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_TITLE);
+		find_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::FIND_START);
+
+		title_text->SetText("Find Game");
+		title_text->SetFont(font);
+
+		title_button->SetText("Back");
+		title_button->SetFont(font);
+
+		ip_textbox->SetText("enter ip");
+		ip_textbox->SetFont(font);
+		ip_textbox->SetSize(3.0f, 1.0f);
+
+		port_textbox->SetText("enter portnumber");
+		port_textbox->SetFont(font);
+		port_textbox->SetSize(3.0f, 1.0f);
+
+		find_button->SetText("Start");
+		find_button->SetFont(font);
+	}
+	else if (m_name == "lvl_ingame")
 	{
 
 	}
@@ -99,6 +167,7 @@ void Level::Load()
 		else if (type == "pl")
 		{
 			m_obj[key] = new Player();
+			World::GetInstance()->RegisterCollObject(tag, static_cast<CollObject*>(m_obj[key]));
 		}
 		else if (type == "co")
 		{
@@ -119,7 +188,7 @@ void Level::Load()
 		m_obj[key]->SetImage(ResourceManager::GetInstance()->LoadImage_(img));
 		m_obj[key]->SetTag(tag);
 		m_obj[key]->SetCollider(img);
-		m_obj[key]->SetLocation(posX, posY);
+		m_obj[key]->SetPosition(posX, posY);
 	}
 
 	fclose(fp);
@@ -150,15 +219,31 @@ void Level::ButtonProcess(void* ctx, int index)
 	}break;
 	case (int)ButtonWork::LVL_HOST:
 	{
-
+		level->GetThisGame()->ChangeLevel("lvl_host");
+		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::LVL_FIND:
 	{
-		
+		level->GetThisGame()->ChangeLevel("lvl_find");
+		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::LVL_INGAME:
 	{
 
+	}break;
+	case (int)ButtonWork::GAME_OUT:
+	{
+		level->UnLoad();
+		level->GetThisGame()->RunOff();
+		InputManager::GetInstance()->ShockOff();
+	}break;
+	case (int)ButtonWork::HOST_START:
+	{
+		level->GetThisGame()->HostGame();
+	}break;
+	case (int)ButtonWork::FIND_START:
+	{
+		level->GetThisGame()->FindGame();
 	}break;
 	}
 }
