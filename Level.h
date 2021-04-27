@@ -45,6 +45,8 @@ public:
 	void SetThisGame(Game* game) { m_game = game; }
 	Game* GetThisGame() { return m_game; }
 
+	void LevelProcess(DWORD tick);
+
 private:
 	static void ButtonProcess(void* ctx, int index);
 };

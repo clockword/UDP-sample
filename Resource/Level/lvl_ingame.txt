@@ -1,0 +1,5 @@
+0 default bg_white 512 384
+1 player pl_dog 512 384
+2 platform co_textbox 512 600
+3 platform co_textbox 512 100
+0 0 End 0 0

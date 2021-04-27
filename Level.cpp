@@ -129,6 +129,7 @@ void Level::Update(Graphics* g, DWORD tick)
 	{
 		it->second->Update(g, tick);
 	}
+	LevelProcess(tick);
 }
 
 void Level::Load()
@@ -206,6 +207,10 @@ void Level::UnLoad()
 	m_obj.clear();
 }
 
+void Level::LevelProcess(DWORD tick)
+{
+}
+
 void Level::ButtonProcess(void* ctx, int index)
 {
 	Level* level = static_cast<Level*>(ctx);
@@ -240,10 +245,14 @@ void Level::ButtonProcess(void* ctx, int index)
 	case (int)ButtonWork::HOST_START:
 	{
 		level->GetThisGame()->HostGame();
+		level->GetThisGame()->ChangeLevel("lvl_ingame");
+		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::FIND_START:
 	{
 		level->GetThisGame()->FindGame();
+		level->GetThisGame()->ChangeLevel("lvl_ingame");
+		InputManager::GetInstance()->ShockOff();
 	}break;
 	}
 }

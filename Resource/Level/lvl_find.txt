@@ -4,4 +4,4 @@
 3 default tb_textbox 512 450
 4 default bt_button 512 600
 5 default tx_text 512 154
-0 0 End 0 0 0
+0 0 End 0 0

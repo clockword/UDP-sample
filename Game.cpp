@@ -129,6 +129,7 @@ void Game::Init()
 	AddLevel("lvl_title");
 	AddLevel("lvl_host");
 	AddLevel("lvl_find");
+	AddLevel("lvl_ingame");
 
 	ChangeLevel("lvl_title");
 }
