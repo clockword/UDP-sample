@@ -131,7 +131,7 @@ void Game::Init()
 	AddLevel("lvl_find");
 	AddLevel("lvl_ingame");
 
-	ChangeLevel("lvl_title");
+	ChangeLevel("lvl_ingame");
 }
 
 void Game::Update(Graphics* g, DWORD tick)

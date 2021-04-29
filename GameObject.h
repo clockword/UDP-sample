@@ -31,6 +31,7 @@ private:
 	ColorMatrix m_imageColor;
 
 	std::string m_tag;
+	std::string m_name;
 
 	SizeF m_imgScale;
 
@@ -64,6 +65,8 @@ public:
 	void SetSize(float x, float y);
 	void SetScale(SizeF scale) { m_imgScale = scale; }
 	SizeF GetScale() { return m_imgScale; }
+	void SetName(std::string name) { m_name = name; }
+	std::string GetName() { return m_name; }
 
 	void SetFile(std::string filename);
 	void SetImage(Image* image);

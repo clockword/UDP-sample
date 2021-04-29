@@ -28,6 +28,19 @@ private:
 		FIND_START,
 	};
 
+	struct _gamePong
+	{
+		int serverScore;
+		int clientScore;
+	};
+
+	union LevelVariables
+	{
+		_gamePong pong;
+		LevelVariables() {}
+	};
+	LevelVariables m_varibales;
+
 public:
 	bool GetIsClear()const { return m_isCleared; }
 	std::string GetName()const { return m_name; }

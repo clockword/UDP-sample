@@ -3,6 +3,7 @@
 #include "Button.h"
 #include "TextBox.h"
 #include "Text.h"
+#include "PongBar.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "CollObject.h"
@@ -116,7 +117,22 @@ void Level::Init()
 	}
 	else if (m_name == "lvl_ingame")
 	{
+		auto server_score = static_cast<Text*>(m_obj[1]);
+		auto client_score = static_cast<Text*>(m_obj[2]);
 
+		std::string font = "Impact";
+
+		server_score->SetFont(font);
+		server_score->SetTextColor(Color::White);
+		server_score->SetFontSize(72);
+		//server_score->SetText("0");
+		m_varibales.pong.serverScore = 0;
+
+		client_score->SetFont(font);
+		client_score->SetTextColor(Color::White);
+		client_score->SetFontSize(72);
+		//client_score->SetText("0");
+		m_varibales.pong.clientScore = 0;
 	}
 
 	World::GetInstance()->Init();
@@ -124,12 +140,12 @@ void Level::Init()
 
 void Level::Update(Graphics* g, DWORD tick)
 {
+	LevelProcess(tick);
 	Objects::iterator it = m_obj.begin();
 	for (;it != m_obj.end();it++)
 	{
 		it->second->Update(g, tick);
 	}
-	LevelProcess(tick);
 }
 
 void Level::Load()
@@ -184,10 +200,15 @@ void Level::Load()
 		{
 			m_obj[key] = new Text();
 		}
+		else if (type == "pb")
+		{
+			m_obj[key] = new PongBar();
+		}
 
 		m_obj[key]->SetFile(img);
 		m_obj[key]->SetImage(ResourceManager::GetInstance()->LoadImage_(img));
 		m_obj[key]->SetTag(tag);
+		m_obj[key]->SetName(name);
 		m_obj[key]->SetCollider(img);
 		m_obj[key]->SetPosition(posX, posY);
 	}
@@ -209,6 +230,16 @@ void Level::UnLoad()
 
 void Level::LevelProcess(DWORD tick)
 {
+	if (m_name == "lvl_ingame")
+	{
+		auto server_score = static_cast<Text*>(m_obj[1]);
+		auto client_score = static_cast<Text*>(m_obj[2]);
+
+		server_score->SetText(std::to_string(m_varibales.pong.serverScore));
+		client_score->SetText(std::to_string(m_varibales.pong.clientScore));
+
+
+	}
 }
 
 void Level::ButtonProcess(void* ctx, int index)

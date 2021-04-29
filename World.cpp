@@ -72,11 +72,7 @@ void World::CollisionProcess(CollObject* object, CollObject* check, Point& movep
 
 			if (distance < checkRadius)
 			{
-				Vector2 movedPos = Vector2(movedRect.GetLeft() + movedRect.Width * 0.5f,
-					movedRect.GetTop() + movedRect.Height * 0.5f);
-				Vector2 pos = checkPosition + Vector2::Normalize(checkPosition, movedPos)
-					* (checkRadius + Vector2::Distance(movedPos, temp));
-				movepos = Point(pos.x, pos.y);
+				// 하지말자 지훈아
 
 				isCollide = true;
 				object->OnCollisionEnter(check);
@@ -96,18 +92,17 @@ void World::CollisionProcess(CollObject* object, CollObject* check, Point& movep
 			Vector2 temp = movedPosition;
 			
 			if (movedPosition.x < checkRect.GetLeft()) temp.x = checkRect.GetLeft();
-			else if (movedPosition.x > checkRect.GetRight()) temp.y = checkRect.GetRight();
-			if (movedPosition.x < checkRect.GetTop()) temp.x = checkRect.GetTop();
-			else if (movedPosition.x > checkRect.GetBottom()) temp.y = checkRect.GetBottom();
+			else if (movedPosition.x > checkRect.GetRight()) temp.x = checkRect.GetRight();
+			if (movedPosition.y < checkRect.GetTop()) temp.y = checkRect.GetTop();
+			else if (movedPosition.y > checkRect.GetBottom()) temp.y = checkRect.GetBottom();
 			float distance = (movedPosition - temp).GetMagnitude();
 
 			if (distance <= movedRadius)
 			{
-				Vector2 checkPos = Vector2(checkRect.GetLeft() + checkRect.Width * 0.5f,
-					checkRect.GetTop() + checkRect.Height * 0.5f);
-				Vector2 pos = movedPosition + Vector2::Normalize(movedPosition, checkPos)
-					* (movedRadius + Vector2::Distance(checkPos, temp));
-				movepos = Point(pos.x, pos.y);
+				/*Vector2 checkPosition = Vector2(checkCollider->GetPosition().X, checkCollider->GetPosition().Y);
+				float angle = Vector2::Angle(Vector2::Right, (checkPosition - movedPosition));*/
+
+				// 지훈아 나중에 해
 
 				isCollide = true;
 				object->OnCollisionEnter(check);

@@ -5,9 +5,16 @@ public:
 	float x;
 	float y;
 
+	static const Vector2 Zero;
+	static const Vector2 Left;
+	static const Vector2 Right;
+	static const Vector2 Up;
+	static const Vector2 Down;
+
 public:
 	Vector2();
 	Vector2(float x, float y);
+	Vector2(const Vector2& vec);
 	Vector2(Vector2 begin, Vector2 end);
 	virtual ~Vector2();
 
@@ -42,10 +49,6 @@ public:
 	static float Angle(Vector2 from, Vector2 to);
 	static float Distance(Vector2 vec1, Vector2 vec2);
 	static Vector2 Normalize(Vector2 begin, Vector2 end);
-	static Vector2 Zero();
-	static Vector2 Left();
-	static Vector2 Right();
-	static Vector2 Up();
-	static Vector2 Down();
+	static float Cross(Vector2 lhs, Vector2 rhs);
 };
 

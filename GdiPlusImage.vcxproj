@@ -106,6 +106,7 @@
     <ClCompile Include="Level.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Player.cpp" />
+    <ClCompile Include="PongBar.cpp" />
     <ClCompile Include="ResourceManager.cpp" />
     <ClCompile Include="Text.cpp" />
     <ClCompile Include="TextBox.cpp" />
@@ -122,7 +123,9 @@
     <ClInclude Include="InputManager.h" />
     <ClInclude Include="Lambda.h" />
     <ClInclude Include="Level.h" />
+    <ClInclude Include="packet.h" />
     <ClInclude Include="Player.h" />
+    <ClInclude Include="PongBar.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="ResourceManager.h" />
     <ClInclude Include="Text.h" />

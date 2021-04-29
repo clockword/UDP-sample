@@ -1,5 +1,12 @@
+#define _USE_MATH_DEFINES
 #include "Vector2.h"
 #include <cmath>
+
+const Vector2 Vector2::Up = Vector2(0.0f, -1.0f);
+const Vector2 Vector2::Down = Vector2(0.0f, 1.0f);
+const Vector2 Vector2::Right = Vector2(1.0f, 0.0f);
+const Vector2 Vector2::Left = Vector2(-1.0f, 0.0f);
+const Vector2 Vector2::Zero = Vector2(0.0f, 0.0f);
 
 Vector2::Vector2()
 {
@@ -12,6 +19,13 @@ Vector2::Vector2(float x, float y)
 	this->x = x;
 	this->y = y;
 }
+
+Vector2::Vector2(const Vector2& vec)
+{
+	this->x = vec.x;
+	this->y = vec.y;
+}
+
 
 Vector2::Vector2(Vector2 begin, Vector2 end)
 {
@@ -192,9 +206,9 @@ float Vector2::GetMagnitude()
 	if (x == 0.0f && y == 0.0f)
 		return 0.0f;
 	else if (x == 0.0f)
-		return y;
+		return y > 0 ? y : -y;
 	else if (y == 0.0f)
-		return x;
+		return x > 0 ? x : -x;
 	return sqrtf(x * x + y * y);
 }
 
@@ -211,10 +225,10 @@ float Vector2::GetSqrMagnitude()
 
 Vector2 Vector2::GetNormalized()
 {
-	if (*this == Vector2::Zero())
-		return Vector2::Zero();
+	if (*this == Vector2::Zero)
+		return Vector2::Zero;
 
-	Vector2 temp = *this;
+	Vector2 temp(*this);
 
 	temp.Normalize();
 
@@ -233,7 +247,7 @@ void Vector2::Normalize()
 
 Vector2 Vector2::GetReverse()
 {
-	return (Vector2::Zero() - (*this));
+	return (Vector2::Zero - (*this));
 }
 
 float Vector2::Dot(Vector2 lhs, Vector2 rhs)
@@ -241,14 +255,17 @@ float Vector2::Dot(Vector2 lhs, Vector2 rhs)
 	return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
-Vector2 Vector2::Lerp(Vector2 a, Vector2 b, float t)
+Vector2 Vector2::Lerp(Vector2 a, Vector2 b, float t = 0.5f)
 {
 	return a * (1.0f - t) + b * t;
 }
 
 float Vector2::Angle(Vector2 from, Vector2 to)
 {
-	return acosf(Dot(from, to) / from.GetMagnitude() / to.GetMagnitude());
+	if(Cross(from, to) < 0)
+		return -(1 - acosf(Dot(from, to) / from.GetMagnitude() / to.GetMagnitude()) / M_PI) * 180.0f;
+	else
+		return (1 - acosf(Dot(from, to) / from.GetMagnitude() / to.GetMagnitude()) / M_PI) * 180.0f;
 }
 
 float Vector2::Distance(Vector2 vec1, Vector2 vec2)
@@ -261,29 +278,7 @@ Vector2 Vector2::Normalize(Vector2 begin, Vector2 end)
 	return (end - begin).GetNormalized();
 }
 
-Vector2 Vector2::Zero()
+float Vector2::Cross(Vector2 lhs, Vector2 rhs)
 {
-	Vector2 temp(0.0f, 0.0f);
-
-	return temp;
-}
-
-Vector2 Vector2::Left()
-{
-	return Vector2(-1.0f, 0.0f);
-}
-
-Vector2 Vector2::Right()
-{
-	return Vector2(1.0f, 0.0f);
-}
-
-Vector2 Vector2::Up()
-{
-	return Vector2(0.0f, -1.0f);
-}
-
-Vector2 Vector2::Down()
-{
-	return Vector2(0.0f, 1.0f);
+	return lhs.x * rhs.y - lhs.y * rhs.x;
 }

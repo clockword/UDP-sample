@@ -32,7 +32,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 	if (WSAStartup(MAKEWORD(2, 2), &wsa) != 0)
 		return -1;
 
-	// ip추출
+	// 온리 로컬플레이만
 	std::string ip;
 	char ucHostName[255];
 	if (0 == gethostname(ucHostName, sizeof(ucHostName)))

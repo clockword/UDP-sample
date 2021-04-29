@@ -17,6 +17,9 @@
     <Filter Include="Utils">
       <UniqueIdentifier>{9d6c2c1c-f9ec-4c49-9b4b-e16d43ce8bea}</UniqueIdentifier>
     </Filter>
+    <Filter Include="GameObject\Pong">
+      <UniqueIdentifier>{8f6c9ebd-b1ac-4a3e-8212-78150cf1f808}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Button.cpp">
@@ -61,6 +64,9 @@
     </ClCompile>
     <ClCompile Include="Vector2.cpp">
       <Filter>Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="PongBar.cpp">
+      <Filter>GameObject\Pong</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -109,6 +115,12 @@
     </ClInclude>
     <ClInclude Include="Vector2.h">
       <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="packet.h">
+      <Filter>Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="PongBar.h">
+      <Filter>GameObject\Pong</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
