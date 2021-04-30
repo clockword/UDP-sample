@@ -1,5 +1,6 @@
 #include <WinSock2.h>
 #include <stdlib.h>
+#include <ctime>
 #include "Game.h"
 #include "InputManager.h"
 
@@ -51,6 +52,8 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		}
 	}
 	g_game.SetIp(ip);
+
+	srand(time(NULL));
 
 	WNDCLASS   wndclass;
 

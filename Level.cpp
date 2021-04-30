@@ -4,6 +4,7 @@
 #include "TextBox.h"
 #include "Text.h"
 #include "PongBar.h"
+#include "PongBall.h"
 #include "ResourceManager.h"
 #include "InputManager.h"
 #include "CollObject.h"
@@ -12,6 +13,7 @@ Level::Level(std::string name)
 {
 	m_name = name;
 	m_isCleared = false;
+	LevelProcess = nullptr;
 }
 
 Level::~Level()
@@ -41,8 +43,8 @@ void Level::Init()
 
 		std::string font = "Comic Sans MS";
 
-		host_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_HOST);
-		find_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::LVL_FIND);
+		host_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::HOST_START);
+		find_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::FIND_START);
 		out_button->RegisterButtonFunc(ButtonProcess, this, (int)ButtonWork::GAME_OUT);
 
 		title_text->SetText("Test Multiplayer");
@@ -59,6 +61,7 @@ void Level::Init()
 		out_button->SetText("Quit Game");
 		out_button->SetFont(font);
 		out_button->SetSize(2.0f, 1.0f);
+
 	}
 	else if (m_name == "lvl_host")
 	{
@@ -119,20 +122,110 @@ void Level::Init()
 	{
 		auto server_score = static_cast<Text*>(m_obj[1]);
 		auto client_score = static_cast<Text*>(m_obj[2]);
+		auto count = static_cast<Text*>(m_obj[6]);
+		auto ball = static_cast<PongBall*>(m_obj[5]);
 
 		std::string font = "Impact";
 
 		server_score->SetFont(font);
 		server_score->SetTextColor(Color::White);
 		server_score->SetFontSize(72);
-		//server_score->SetText("0");
-		m_varibales.pong.serverScore = 0;
+		m_variables.pong.serverScore = 0;
 
 		client_score->SetFont(font);
 		client_score->SetTextColor(Color::White);
 		client_score->SetFontSize(72);
-		//client_score->SetText("0");
-		m_varibales.pong.clientScore = 0;
+		m_variables.pong.clientScore = 0;
+
+		count->SetFont(font);
+		count->SetTextColor(Color::Red);
+		count->SetFontSize(96);
+		m_variables.pong.startCount = 3.99f;
+
+		m_variables.pong.otherConnected = false;
+		m_variables.pong.timedelayed = 0.0f;
+
+		count->SetActive(false);
+		ball->SetActive(false);
+
+		LevelProcess = [](Level* level, DWORD tick) -> void
+		{
+			auto server_score = static_cast<Text*>(level->m_obj[1]);
+			auto client_score = static_cast<Text*>(level->m_obj[2]);
+			auto count = static_cast<Text*>(level->m_obj[6]);
+			auto ball = static_cast<PongBall*>(level->m_obj[5]);
+
+			if (level->m_variables.pong.otherConnected)
+			{
+				PongBar* pongbar = static_cast<PongBar*>(level->m_variables.pong.control);
+
+				server_score->SetText(std::to_string(level->m_variables.pong.serverScore));
+				client_score->SetText(std::to_string(level->m_variables.pong.clientScore));
+
+				CHARMOVE move;
+
+				if (level->m_variables.pong.startCount > 0.0f)
+				{
+					if (level->m_variables.pong.playerType == _gamePong::_thisType::Server)
+					{
+						level->m_variables.pong.startCount -= tick * 0.001f;
+						move.count = level->m_variables.pong.startCount;
+						if (level->m_variables.pong.startCount <= 0.0f)
+						{
+							count->SetActive(false);
+							ball->SetActive(true);
+							ball->StartShoot();
+						}
+					}
+					count->SetText(std::to_string((int)floor(level->m_variables.pong.startCount)));
+				}
+
+				level->m_variables.pong.timedelayed += tick * 0.001f;
+				if (level->m_variables.pong.timedelayed >= 0.02f)
+				{
+					level->m_variables.pong.timedelayed = 0.0f;
+					move.curX = pongbar->GetPosition().X;
+					move.curY = pongbar->GetPosition().Y;
+					move.ballX = ball->GetPosition().X;
+					move.ballY = ball->GetPosition().Y;
+					level->GetThisGame()->Send(&move);
+				}
+
+				if (ball->GetPosition().X < 0.0f)
+				{
+					level->m_variables.pong.clientScore += 1;
+					level->m_variables.pong.startCount = 3.99f;
+					count->SetActive(true);
+					ball->SetActive(false);
+					ball->SetMovedPosition(Point(512, 384));
+				}
+				else if (ball->GetPosition().X > 1024.0f)
+				{
+					level->m_variables.pong.serverScore += 1;
+					level->m_variables.pong.startCount = 3.99f;
+					count->SetActive(true);
+					ball->SetActive(false);
+					ball->SetMovedPosition(Point(512, 384));
+				}
+			}
+			else
+			{
+				if (level->m_variables.pong.playerType == _gamePong::_thisType::Server)
+				{
+					server_score->SetText("Ready");
+					client_score->SetText("Not Ready");
+				}
+				else if (level->m_variables.pong.playerType == _gamePong::_thisType::Client)
+				{
+					server_score->SetText("Not Ready");
+					client_score->SetText("Ready");
+				}
+
+				LOGIN packet;
+				packet.active = true;
+				level->GetThisGame()->Send(&packet);
+			}
+		};
 	}
 
 	World::GetInstance()->Init();
@@ -140,7 +233,7 @@ void Level::Init()
 
 void Level::Update(Graphics* g, DWORD tick)
 {
-	LevelProcess(tick);
+	if (LevelProcess != nullptr) LevelProcess(this, tick);
 	Objects::iterator it = m_obj.begin();
 	for (;it != m_obj.end();it++)
 	{
@@ -203,6 +296,12 @@ void Level::Load()
 		else if (type == "pb")
 		{
 			m_obj[key] = new PongBar();
+			World::GetInstance()->RegisterCollObject(tag, static_cast<PongBar*>(m_obj[key]));
+		}
+		else if (type == "bl")
+		{
+			m_obj[key] = new PongBall();
+			World::GetInstance()->RegisterCollObject(tag, static_cast<PongBall*>(m_obj[key]));
 		}
 
 		m_obj[key]->SetFile(img);
@@ -228,62 +327,109 @@ void Level::UnLoad()
 	m_obj.clear();
 }
 
-void Level::LevelProcess(DWORD tick)
+void Level::RecievePacket(LPPACKETHEADER packet)
 {
-	if (m_name == "lvl_ingame")
+	switch (packet->id)
 	{
-		auto server_score = static_cast<Text*>(m_obj[1]);
-		auto client_score = static_cast<Text*>(m_obj[2]);
+	case PKT_CHARMOVE:
+	{
+		LPCHARMOVE data = static_cast<LPCHARMOVE>(packet);
 
-		server_score->SetText(std::to_string(m_varibales.pong.serverScore));
-		client_score->SetText(std::to_string(m_varibales.pong.clientScore));
+		if(m_name == "lvl_ingame")
+		{
+			PongBar* other = static_cast<PongBar*>(m_variables.pong.other);
+			PongBall* ball = static_cast<PongBall*>(m_obj[5]);
 
+			if (m_variables.pong.playerType == _gamePong::_thisType::Client)
+			{
+				m_variables.pong.startCount = data->count;
+				if (data->count <= 0.0f)
+				{
+					auto startCount = m_obj[6];
+					
+					startCount->SetActive(false);
+					ball->SetActive(true);
+				}
+				ball->SetMovedPosition(Point(data->ballX, data->ballY));
+			}
 
+			other->SetMovedPosition(Point(data->curX, data->curY));
+		}
+		
+	}break;
+	case PKT_LOGIN:
+	{
+		LPLOGIN data = static_cast<LPLOGIN>(packet);
+
+		if (m_name == "lvl_ingame")
+		{
+			if (!m_variables.pong.otherConnected)
+			{
+				auto count = m_obj[6];
+				count->SetActive(true);
+
+				LOGIN packet;
+				packet.active = true;
+				m_game->Send(&packet);
+			}
+
+			m_variables.pong.otherConnected = data->active;
+		}
+	}break;
 	}
 }
 
 void Level::ButtonProcess(void* ctx, int index)
 {
 	Level* level = static_cast<Level*>(ctx);
+	Game* game = level->GetThisGame();
 
 	switch (index)
 	{
 	case (int)ButtonWork::LVL_TITLE:
 	{
-		level->GetThisGame()->ChangeLevel("lvl_title");
+		game->ChangeLevel("lvl_title");
 		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::LVL_HOST:
 	{
-		level->GetThisGame()->ChangeLevel("lvl_host");
+		game->ChangeLevel("lvl_host");
 		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::LVL_FIND:
 	{
-		level->GetThisGame()->ChangeLevel("lvl_find");
+		game->ChangeLevel("lvl_find");
 		InputManager::GetInstance()->ShockOff();
-	}break;
-	case (int)ButtonWork::LVL_INGAME:
-	{
-
 	}break;
 	case (int)ButtonWork::GAME_OUT:
 	{
 		level->UnLoad();
-		level->GetThisGame()->RunOff();
+		game->RunOff();
 		InputManager::GetInstance()->ShockOff();
 	}break;
 	case (int)ButtonWork::HOST_START:
 	{
-		level->GetThisGame()->HostGame();
-		level->GetThisGame()->ChangeLevel("lvl_ingame");
+		game->HostGame();
+		game->ChangeLevel("lvl_ingame");
 		InputManager::GetInstance()->ShockOff();
+
+		PongBar* pongbar = static_cast<PongBar*>(game->GetCurrentLevel()->m_obj[3]);
+		game->GetCurrentLevel()->m_variables.pong.control = pongbar;
+		game->GetCurrentLevel()->m_variables.pong.other = game->GetCurrentLevel()->m_obj[4];
+		pongbar->SetLocalControl();
+		game->GetCurrentLevel()->m_variables.pong.playerType = _gamePong::_thisType::Server;
 	}break;
 	case (int)ButtonWork::FIND_START:
 	{
-		level->GetThisGame()->FindGame();
-		level->GetThisGame()->ChangeLevel("lvl_ingame");
+		game->FindGame();
+		game->ChangeLevel("lvl_ingame");
 		InputManager::GetInstance()->ShockOff();
+
+		PongBar* pongbar = static_cast<PongBar*>(game->GetCurrentLevel()->m_obj[4]);
+		game->GetCurrentLevel()->m_variables.pong.control = pongbar;
+		game->GetCurrentLevel()->m_variables.pong.other = game->GetCurrentLevel()->m_obj[3];
+		pongbar->SetLocalControl();
+		game->GetCurrentLevel()->m_variables.pong.playerType = _gamePong::_thisType::Client;
 	}break;
 	}
 }

@@ -68,6 +68,9 @@
     <ClCompile Include="PongBar.cpp">
       <Filter>GameObject\Pong</Filter>
     </ClCompile>
+    <ClCompile Include="PongBall.cpp">
+      <Filter>GameObject\Pong</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Button.h">
@@ -120,6 +123,9 @@
       <Filter>Utils</Filter>
     </ClInclude>
     <ClInclude Include="PongBar.h">
+      <Filter>GameObject\Pong</Filter>
+    </ClInclude>
+    <ClInclude Include="PongBall.h">
       <Filter>GameObject\Pong</Filter>
     </ClInclude>
   </ItemGroup>

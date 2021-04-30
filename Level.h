@@ -5,6 +5,8 @@
 #include "Game.h"
 #include "Player.h"
 
+#include "packet.h"
+
 class Game;
 class Level
 {
@@ -22,7 +24,6 @@ private:
 		LVL_TITLE,
 		LVL_HOST,
 		LVL_FIND,
-		LVL_INGAME,
 		GAME_OUT,
 		HOST_START,
 		FIND_START,
@@ -30,8 +31,19 @@ private:
 
 	struct _gamePong
 	{
+		enum class _thisType
+		{
+			Server,
+			Client,
+		};
+		_thisType playerType;
 		int serverScore;
 		int clientScore;
+		GameObject* control;
+		GameObject* other;
+		bool otherConnected;
+		float timedelayed;
+		float startCount;
 	};
 
 	union LevelVariables
@@ -39,7 +51,7 @@ private:
 		_gamePong pong;
 		LevelVariables() {}
 	};
-	LevelVariables m_varibales;
+	LevelVariables m_variables;
 
 public:
 	bool GetIsClear()const { return m_isCleared; }
@@ -58,7 +70,9 @@ public:
 	void SetThisGame(Game* game) { m_game = game; }
 	Game* GetThisGame() { return m_game; }
 
-	void LevelProcess(DWORD tick);
+	void (*LevelProcess)(Level* level, DWORD tick);
+
+	void RecievePacket(LPPACKETHEADER packet);
 
 private:
 	static void ButtonProcess(void* ctx, int index);

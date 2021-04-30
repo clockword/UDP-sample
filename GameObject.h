@@ -41,7 +41,6 @@ protected:
 	void SetCenter(int x, int y);
 	void MoveTo(int x, int y);
 	void MoveBy(int x, int y);
-	void SetActive(bool active) { m_active = active; }
 	Rect GetOriginalImageRect();
 	Rect GetImageRect();
 	void SetImageColor(ColorMatrix color) { m_imageColor = color; }
@@ -58,6 +57,7 @@ public:
 
 	void SetTag(std::string tag) { m_tag = tag; }
 	std::string GetTag() { return m_tag; }
+	void SetActive(bool active) { m_active = active; }
 	bool GetActive() { return m_active; }
 	Point GetPosition() { return Point(m_x, m_y); }
 	void SetPosition(int x, int y);

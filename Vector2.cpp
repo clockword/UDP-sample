@@ -252,6 +252,10 @@ Vector2 Vector2::GetReverse()
 
 float Vector2::Dot(Vector2 lhs, Vector2 rhs)
 {
+	if (lhs.x == 0.0f && rhs.x == 0.0f)
+		return lhs.y * rhs.y;
+	else if (lhs.y == 0.0f && rhs.y == 0.0f)
+		return lhs.x * rhs.x;
 	return lhs.x * rhs.x + lhs.y * rhs.y;
 }
 
@@ -262,10 +266,28 @@ Vector2 Vector2::Lerp(Vector2 a, Vector2 b, float t = 0.5f)
 
 float Vector2::Angle(Vector2 from, Vector2 to)
 {
-	if(Cross(from, to) < 0)
+	if (from.GetNormalized() == to.GetNormalized())
+		return 0.0f;
+	if (from.GetNormalized().GetReverse() == to.GetNormalized())
+		return 180.0f;
+	if (Cross(from, to) < 0)
 		return -(1 - acosf(Dot(from, to) / from.GetMagnitude() / to.GetMagnitude()) / M_PI) * 180.0f;
 	else
 		return (1 - acosf(Dot(from, to) / from.GetMagnitude() / to.GetMagnitude()) / M_PI) * 180.0f;
+}
+
+Vector2 Vector2::Rotate(Vector2 vec, float rotation)
+{
+	float rot = rotation * M_PI / 180.0f;
+
+	float x = vec.x * cos(rot) - vec.y * sin(rot);
+	float y = -vec.x * sin(rot) - vec.y * cos(rot);
+	if (fmod(rotation, 360.0f) == 0.0f || fmod(rotation, 180.0f) == 0.0f) x = 0.0f;
+	if (fmod(rotation, 360.0f) == 0.0f) y = -1.0f;
+	else if (fmod(rotation, 180.0f) == 0.0f) y = 1.0f;
+	else if (fmod(rotation, 90.0f) == 0.0f) y = 0.0f;
+
+	return Vector2(x, y);
 }
 
 float Vector2::Distance(Vector2 vec1, Vector2 vec2)
@@ -281,4 +303,14 @@ Vector2 Vector2::Normalize(Vector2 begin, Vector2 end)
 float Vector2::Cross(Vector2 lhs, Vector2 rhs)
 {
 	return lhs.x * rhs.y - lhs.y * rhs.x;
+}
+
+Vector2 Vector2::Reflection(Vector2 vec, Vector2 mirror)
+{
+	return (vec.GetNormalized() - mirror.GetNormalized() * 2.0f * Vector2::Dot(vec.GetNormalized(), mirror.GetNormalized())) * vec.GetMagnitude();
+}
+
+Vector2 Vector2::Normalize(Vector2 vec)
+{
+	return vec.GetNormalized();
 }

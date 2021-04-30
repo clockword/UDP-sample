@@ -6,21 +6,15 @@ void PongBar::Control(DWORD tick)
 
 	::GetKeyboardState(key);
 
-	if (key[VK_LEFT] & 0x80)
+	if (key[VK_UP] & 0x80)
 	{
-		SetAcceleration(Vector2::Left * 10000.0f);
-	}
-	else if (key[VK_RIGHT] & 0x80)
-	{
-		SetAcceleration(Vector2::Right * 10000.0f);
-	}
-	else if (key[VK_UP] & 0x80)
-	{
-		SetAcceleration(Vector2::Up * 10000.0f);
+		if (GetVelocity().y > 0) SetVelocity(Vector2::Zero);
+		SetAcceleration(Vector2::Up * 1000.0f);
 	}
 	else if (key[VK_DOWN] & 0x80)
 	{
-		SetAcceleration(Vector2::Down * 10000.0f);
+		if (GetVelocity().y < 0) SetVelocity(Vector2::Zero);
+		SetAcceleration(Vector2::Down * 1000.0f);
 	}
 	else
 	{
@@ -28,31 +22,39 @@ void PongBar::Control(DWORD tick)
 	}
 }
 
-CHARMOVE PongBar::GetPacket()
+void PongBar::PongBarProcess()
 {
-	CHARMOVE charMove;
-	charMove.curX = GetPosition().X;
-	charMove.curY = GetPosition().Y;
-
-	return charMove;
+	Point position = GetPosition();
+	if (position.Y > 718)
+	{
+		SetPosition(position.X, 718);
+		SetVelocity(-GetVelocity());
+	}
+	else if(position.Y < 50)
+	{
+		SetPosition(position.X, 50);
+		SetVelocity(-GetVelocity());
+	}
 }
 
 void PongBar::Init()
 {
 	CollObject::Init();
 	SetMaxSpeed(100.0f);
-	SetFriction(100000.0f);
+	SetFriction(1.0f);
 }
 
 void PongBar::Update(Graphics* g, DWORD tick)
 {
 	if (m_iControl) Control(tick);
-
+	PongBarProcess();
 	GameObject::Update(g, tick);
 }
 
 void PongBar::OnCollisionEnter(CollObject* other)
 {
+	if (!m_iControl) return;
+
 	if (other->GetName() == "pongball")
 	{
 

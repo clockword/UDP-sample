@@ -66,7 +66,7 @@ void Game::FindGame()
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_port = htons(9000);
+	serveraddr.sin_port = htons(9001);
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	int retval = bind(m_socket, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR)
@@ -101,13 +101,10 @@ void Game::HostGame()
 	m_otherAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
 }
 
-void Game::Send()
+void Game::Send(LPPACKETHEADER packet)
 {
-	DATA data;
-
 	int retval;
-	int size = sizeof(DATA);
-	retval = sendto(m_socket, (const char*)&data, size, 0, (SOCKADDR*)&m_otherAddr, sizeof(m_otherAddr));
+	retval = sendto(m_socket, (const char*)packet, packet->size, 0, (SOCKADDR*)&m_otherAddr, sizeof(m_otherAddr));
 	if (retval == SOCKET_ERROR)
 	{
 		if (WSAGetLastError() != WSAEWOULDBLOCK)
@@ -116,10 +113,10 @@ void Game::Send()
 	}
 }
 
-void Game::Recieve(char buf[1024])
+void Game::Recieve(const char buf[1024])
 {
-	DATA* data = (DATA*)buf;
-
+	LPPACKETHEADER packet = (LPPACKETHEADER)buf;
+	m_currentLevel->RecievePacket(packet);
 }
 
 void Game::Init()
@@ -131,7 +128,7 @@ void Game::Init()
 	AddLevel("lvl_find");
 	AddLevel("lvl_ingame");
 
-	ChangeLevel("lvl_ingame");
+	ChangeLevel("lvl_title");
 }
 
 void Game::Update(Graphics* g, DWORD tick)

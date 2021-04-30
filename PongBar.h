@@ -1,7 +1,6 @@
 #pragma once
 
 #include "CollObject.h"
-#include "packet.h"
 
 class PongBar : public CollObject
 {
@@ -10,12 +9,11 @@ private:
 
 private:
 	void Control(DWORD tick);
+	void PongBarProcess();
 
 public:
 	PongBar() : CollObject(), m_iControl(false) {}
 	virtual ~PongBar() {}
-
-	CHARMOVE GetPacket();
 	
 	void SetLocalControl() { m_iControl = true; }
 

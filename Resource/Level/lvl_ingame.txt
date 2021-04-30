@@ -1,4 +1,8 @@
 0 default bg_pongback 512 384
 1 default tx_text 340 100
 2 default tx_text 684 100
+3 player pb_pongbar 100 384
+4 player pb_pongbar 924 384
+5 prop bl_pongball 512 384
+6 default tx_text 512 384
 0 0 End 0 0

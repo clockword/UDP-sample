@@ -6,6 +6,8 @@
 #include "Level.h"
 #include "World.h"
 
+#include "packet.h"
+
 class Level;
 class Game
 {
@@ -28,16 +30,11 @@ private:
 	
 	void err_quit(char* msg);
 
-private:
-	struct DATA
-	{
-
-	};
-
 public:
 	Game();
 	virtual ~Game();
 
+	Level* GetCurrentLevel() { return m_currentLevel; }
 	void ChangeLevel(std::string name);
 
 	bool Run() { return m_run; }
@@ -49,8 +46,8 @@ public:
 	void FindGame();
 	void HostGame();
 
-	void Send();
-	void Recieve(char buf[1024]);
+	void Send(LPPACKETHEADER packet);
+	void Recieve(const char buf[1024]);
 
 	void Init();
 	void Update(Graphics* g, DWORD tick);
