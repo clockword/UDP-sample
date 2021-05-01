@@ -86,7 +86,7 @@ void TextBox::OnKeyboardInput(char ch)
 			}
 		}
 		else if ((ch >= '0' && ch <= '9' || ch == '.')
-			&& text.size() < 15)
+			&& text.size() < m_textLimit)
 		{
 			text.push_back(ch);
 		}

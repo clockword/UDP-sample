@@ -20,6 +20,8 @@ private:
 	DWORD*m_aniInterval;
 	DWORD*m_aniIntervalMax;
 
+	void* m_vpLevel;
+
 	int m_x;
 	int m_y;
 	int m_xCenter;
@@ -67,6 +69,8 @@ public:
 	SizeF GetScale() { return m_imgScale; }
 	void SetName(std::string name) { m_name = name; }
 	std::string GetName() { return m_name; }
+	void SetLevel(void* level) { m_vpLevel = level; }
+	void* GetLevel() { return m_vpLevel; }
 
 	void SetFile(std::string filename);
 	void SetImage(Image* image);

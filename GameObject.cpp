@@ -25,6 +25,7 @@ GameObject::GameObject()
 				     0.0f, 0.0f, 0.0f, 1.0f, 0.0f,
 				     0.0f, 0.0f, 0.0f, 0.0f, 1.0f };
 	m_imgScale = SizeF(1.0f, 1.0f);
+	m_vpLevel = nullptr;
 }
 
 GameObject::~GameObject()

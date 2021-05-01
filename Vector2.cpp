@@ -307,7 +307,7 @@ float Vector2::Cross(Vector2 lhs, Vector2 rhs)
 
 Vector2 Vector2::Reflection(Vector2 vec, Vector2 mirror)
 {
-	return (vec.GetNormalized() - mirror.GetNormalized() * 2.0f * Vector2::Dot(vec.GetNormalized(), mirror.GetNormalized())) * vec.GetMagnitude();
+	return vec - (mirror.GetNormalized() * 2.0f * Vector2::Dot(vec, mirror.GetNormalized()));
 }
 
 Vector2 Vector2::Normalize(Vector2 vec)

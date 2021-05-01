@@ -6,6 +6,12 @@
 
 #pragma comment(lib,"WS2_32.lib")
 
+//#ifdef UNICODE
+//#pragma comment(linker, "/entry:wWinMainCRTStartup /subsystem:console")
+//#else
+//#pragma comment(linker, "/entry:WinMainCRTStartup /subsystem:console")
+//#endif
+
 #define WM_SOCKET	WM_USER+1
 #define BUFSIZE		1024
 
@@ -79,7 +85,7 @@ int APIENTRY WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 		WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_VISIBLE | WS_CAPTION | WS_MINIMIZEBOX,
 		FALSE);
 
-	HWND hwnd = CreateWindow("myGame", "Game Window",
+	HWND hwnd = CreateWindow("myGame", "Pong Multiplayer",
 		WS_POPUP | WS_THICKFRAME | WS_SYSMENU | WS_VISIBLE | WS_CAPTION | WS_MINIMIZEBOX,
 		100, 100, rc.right-rc.left, rc.bottom-rc.top, NULL, NULL, hInstance, NULL);
 
@@ -162,7 +168,9 @@ LRESULT CALLBACK WndProc(HWND hWnd, UINT msg, WPARAM wParam, LPARAM lParam)
 		InputManager::GetInstance()->KeyBoardInput(wParam);
 	}break;
 	case WM_KEYDOWN:
-		break;
+	{
+		if (wParam == VK_ESCAPE) g_game.RunOff();
+	}break;
 	case WM_CREATE:
 	{
 		g_sock = socket(AF_INET, SOCK_DGRAM, 0);

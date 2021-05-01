@@ -65,9 +65,9 @@ void World::CollisionProcess(CollObject* object, CollObject* check, Point& movep
 			Vector2 temp = checkPosition;
 
 			if (checkPosition.x < movedRect.GetLeft()) temp.x = movedRect.GetLeft();
-			else if (checkPosition.x > movedRect.GetRight()) temp.y = movedRect.GetRight();
-			if (checkPosition.x < movedRect.GetTop()) temp.x = movedRect.GetTop();
-			else if (checkPosition.x > movedRect.GetBottom()) temp.y = movedRect.GetBottom();
+			else if (checkPosition.x > movedRect.GetRight()) temp.x = movedRect.GetRight();
+			if (checkPosition.y < movedRect.GetTop()) temp.y = movedRect.GetTop();
+			else if (checkPosition.y > movedRect.GetBottom()) temp.y = movedRect.GetBottom();
 			float distance = Vector2::Distance(checkPosition, temp);
 
 			if (distance < checkRadius)
@@ -153,6 +153,7 @@ void World::Init()
 		}
 		else if (tag == "prop")
 		{
+			PushCheckMap("player", arr);
 			PushCheckMap("prop", arr);
 		}
 		else if (tag == "player")

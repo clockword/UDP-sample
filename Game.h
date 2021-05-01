@@ -15,6 +15,7 @@ private:
 	SOCKADDR_IN m_otherAddr;
 	SOCKET m_socket;
 	std::string m_ip;
+	unsigned short m_port;
 
 	typedef std::map<std::string, Level*> Levels;
 	Levels m_levels;
@@ -41,6 +42,9 @@ public:
 	void RunOff() { m_run = false; }
 
 	void SetIp(std::string ip) { m_ip = ip; }
+	std::string GetIp() { return m_ip; }
+	void SetPortNumber(unsigned short port) { m_port = port; }
+	short GetPortNumber() { return m_port; }
 	void SetSocket(SOCKET sock) { m_socket = sock; }
 
 	void FindGame();

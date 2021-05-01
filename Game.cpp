@@ -66,7 +66,7 @@ void Game::FindGame()
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_port = htons(9001);
+	serveraddr.sin_port = htons(m_port + 1);
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	int retval = bind(m_socket, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR)
@@ -77,7 +77,7 @@ void Game::FindGame()
 
 	ZeroMemory(&m_otherAddr, sizeof(m_otherAddr));
 	m_otherAddr.sin_family = AF_INET;
-	m_otherAddr.sin_port = htons(9000);
+	m_otherAddr.sin_port = htons(m_port);
 	m_otherAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
 }
 
@@ -86,7 +86,7 @@ void Game::HostGame()
 	SOCKADDR_IN serveraddr;
 	ZeroMemory(&serveraddr, sizeof(serveraddr));
 	serveraddr.sin_family = AF_INET;
-	serveraddr.sin_port = htons(9000);
+	serveraddr.sin_port = htons(m_port);
 	serveraddr.sin_addr.s_addr = htonl(INADDR_ANY);
 	int retval = bind(m_socket, (SOCKADDR*)&serveraddr, sizeof(serveraddr));
 	if (retval == SOCKET_ERROR)
@@ -97,7 +97,7 @@ void Game::HostGame()
 
 	ZeroMemory(&m_otherAddr, sizeof(m_otherAddr));
 	m_otherAddr.sin_family = AF_INET;
-	m_otherAddr.sin_port = htons(9001);
+	m_otherAddr.sin_port = htons(m_port + 1);
 	m_otherAddr.sin_addr.s_addr = inet_addr(m_ip.c_str());
 }
 

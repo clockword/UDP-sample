@@ -42,8 +42,9 @@ private:
 		GameObject* control;
 		GameObject* other;
 		bool otherConnected;
-		float timedelayed;
+		float delayedTimeToSend;
 		float startCount;
+		float delayedTimeUnconnect;
 	};
 
 	union LevelVariables
@@ -69,6 +70,8 @@ public:
 
 	void SetThisGame(Game* game) { m_game = game; }
 	Game* GetThisGame() { return m_game; }
+
+	LevelVariables* GetLevelValue() { return &m_variables; }
 
 	void (*LevelProcess)(Level* level, DWORD tick);
 

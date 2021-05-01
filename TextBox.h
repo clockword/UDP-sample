@@ -7,6 +7,7 @@ class TextBox : public Button
 {
 private:
 	bool m_typeable;
+	int m_textLimit;
 
 protected:
 	virtual void MouseWork();
@@ -20,8 +21,8 @@ public:
 	virtual void OnMouseButtonUp(int x, int y);
 	void OnKeyboardInput(char ch);
 
-	virtual void Update(Graphics* g, DWORD tick);
+	void SetTextLimit(int limit) { m_textLimit = limit; }
 
-	long GetTextToNumber() { return std::stol(GetText()); }
+	virtual void Update(Graphics* g, DWORD tick);
 };
 
